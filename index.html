@@ -114,6 +114,26 @@
                 <span>200px</span>
               </div>
             </div>
+            <div>
+              <span class="block text-sm font-medium text-slate-700 mb-2">文字揃え</span>
+              <div class="flex flex-wrap gap-3">
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="alignLeft" name="textAlign" type="radio" value="left" checked
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">左</span>
+                </label>
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="alignCenter" name="textAlign" type="radio" value="center"
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">中央</span>
+                </label>
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="alignRight" name="textAlign" type="radio" value="right"
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">右</span>
+                </label>
+              </div>
+            </div>
             <div class="pt-2 border-t border-slate-100">
               <label class="inline-flex items-center cursor-pointer hover:opacity-80 transition-opacity">
                 <input type="checkbox" id="showBorderCheckbox" checked
@@ -180,6 +200,7 @@
       const downloadBtn = document.getElementById('downloadBtn');
       const fontSelect = document.getElementById('fontSelect');
       const colorInput = document.getElementById('colorInput');
+      const textAlignInputs = document.querySelectorAll('input[name="textAlign"]');
       const strokeCheckbox = document.getElementById('strokeCheckbox');
       const strokeColorInput = document.getElementById('strokeColorInput');
       const fontSizeSlider = document.getElementById('fontSizeSlider');
@@ -203,6 +224,7 @@
         fontFamily: 'Mochiy Pop P One',
         fontSize: 150,
         color: '#ff0000',
+        textAlign: 'center',
         strokeEnabled: true,
         strokeColor: '#ffffff',
         showBorder: true,
@@ -212,6 +234,7 @@
         fontFamily: 'Mochiy Pop P One',
         fontSize: 60,
         color: '#ff0000',
+        textAlign: 'center',
         strokeEnabled: true,
         strokeColor: '#ffffff',
         showBorder: true,
@@ -332,6 +355,9 @@
         textInput.value = layer.text;
         fontSelect.value = layer.fontFamily;
         colorInput.value = layer.color || '#000000';
+        for (const input of textAlignInputs) {
+          input.checked = input.value === (layer.textAlign || 'left');
+        }
         strokeCheckbox.checked = layer.strokeEnabled ?? false;
         strokeColorInput.value = layer.strokeColor || '#ffffff';
         fontSizeSlider.value = layer.fontSize;
@@ -353,6 +379,7 @@
           fontFamily: base.fontFamily,
           fontSize: base.fontSize,
           color: base.color,
+          textAlign: base.textAlign,
           strokeEnabled: base.strokeEnabled,
           strokeColor: base.strokeColor,
           showBorder: base.showBorder,
@@ -573,9 +600,16 @@
           const text = layer.text;
           const fontSize = layer.fontSize;
           const lineHeight = fontSize;
-          const x0 = rect.x;
+          let x0 = rect.x;
+          let textAlign = layer.textAlign || 'left';
+          if (textAlign === 'center') {
+            x0 = rect.x + rect.w / 2;
+          } else if (textAlign === 'right') {
+            x0 = rect.x + rect.w;
+          }
           let y0 = rect.y + lineHeight;
           context.font = `${fontSize}px "${layer.fontFamily}", sans-serif`;
+          context.textAlign = textAlign;
           context.fillStyle = layer.color || 'black';
           if (layer.strokeEnabled) {
             context.strokeStyle = layer.strokeColor || 'white';
@@ -677,6 +711,15 @@
         getActiveLayer().color = colorInput.value;
         drawCanvas(ctx, showBorderCheckbox.checked);
       });
+
+      for (const input of textAlignInputs) {
+        input.addEventListener('change', () => {
+          if (input.checked) {
+            getActiveLayer().textAlign = input.value;
+            drawCanvas(ctx, showBorderCheckbox.checked);
+          }
+        });
+      }
 
       strokeCheckbox.addEventListener('change', () => {
         getActiveLayer().strokeEnabled = strokeCheckbox.checked;
