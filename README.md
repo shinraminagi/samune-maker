@@ -1,5 +1,7 @@
 # サムネメーカー (samune-maker)
 
+<img width="1900" height="1750" alt="screenshot" src="https://github.com/user-attachments/assets/b7e05b21-7d28-4fb9-b668-2277f88dd352" />
+
 シンプルなサムネ作成用 Web アプリです。
 
 - 画像をドラッグ＆ドロップ、コピペ、またはファイル選択で背景に読み込み
