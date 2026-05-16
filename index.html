@@ -1,17 +1,10 @@
-<!--
-開発環境更新 (Development)
-
-このHTMLは単一ファイルで、画像をBase64で埋め込んでいます。
-外部ブラウザで開いてプレビューしてください。
--->
-
 <!DOCTYPE html>
 <html lang="ja">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>してしまいましたメーカー</title>
+  <title>サムネメーカー</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -72,7 +65,7 @@
             <div class="flex flex-wrap gap-2" id="layerTabs"></div>
             <div class="flex gap-2">
               <button id="addLayerBtn" type="button"
-                class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">＋追加</button>
+                class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">＋</button>
               <button id="removeLayerBtn" type="button"
                 class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">削除</button>
             </div>
@@ -80,13 +73,11 @@
 
           <div id="layerSettings" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">テキスト</label>
               <textarea id="textInput"
                 class="w-full p-3 sm:p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-24 sm:h-32 text-base sm:text-lg text-slate-700"
                 placeholder="ここにテキストを入力してください..."></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">フォント</label>
               <select id="fontSelect"
                 class="w-full p-2 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-base sm:text-lg text-slate-700">
                 <option value="Mochiy Pop P One">Mochiy Pop P One</option>
@@ -210,12 +201,21 @@
       let textLayers = [{
         text: 'みなぎちゃんねる',
         fontFamily: 'Mochiy Pop P One',
-        fontSize: 100,
+        fontSize: 150,
         color: '#ff0000',
         strokeEnabled: true,
         strokeColor: '#ffffff',
         showBorder: true,
         rect: { x: 20, y: 460, w: 1240, h: 240 }
+      }, {
+        text: '1月2日 23:45頃開始',
+        fontFamily: 'Mochiy Pop P One',
+        fontSize: 60,
+        color: '#ff0000',
+        strokeEnabled: true,
+        strokeColor: '#ffffff',
+        showBorder: true,
+        rect: { x: 20, y: 20, w: 1240, h: 180 }
       }];
       let activeLayerIndex = 0;
       let isDragging = false, mode = null;
