@@ -52,7 +52,7 @@
       <h1
         class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
         style="font-family: 'Mochiy Pop P One', sans-serif;">
-        してしまいましたメーカー
+        サムネメーカー
       </h1>
     </header>
 
@@ -60,37 +60,62 @@
       <!-- Canvas Section -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl shadow-lg p-3 sm:p-6">
-          <img id="normalImage" style="display:none;" src="normal.png">
-          <img id="summerImage" style="display:none;" src="summer.png">
           <canvas id="canvas" class="w-full border-2 border-slate-200 rounded-lg shadow-sm"></canvas>
-          <p class="text-slate-600 text-base sm:text-lg md:text-xl">
-            <span class="whitespace-nowrap">作：<a href="https://x.com/dasazyake/status/986249842862186496"
-                class="text-blue-600 hover:underline">ダイナミックベーコン先生</a>　　</span>
-            <span class="whitespace-nowrap">(※ドラッグで領域を選択・移動できます)</span>
-          </p>
         </div>
       </div>
 
       <!-- Controls Section -->
       <div class="space-y-4 sm:space-y-6">
-        <!-- Text Input -->
+        <!-- Text Layer Controls -->
         <div class="bg-white rounded-xl shadow-lg p-3 sm:p-6">
-          <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3 sm:mb-4 flex items-center">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-500" fill="none" stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-              </path>
-            </svg>
-            テキスト入力
-          </h3>
-          <textarea id="textInput"
-            class="w-full p-3 sm:p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-24 sm:h-32 text-base sm:text-lg text-slate-700"
-            placeholder="ここにテキストを入力してください...">わたしはこんなのを
-つくってしまいました</textarea>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="flex flex-wrap gap-2" id="layerTabs"></div>
+            <div class="flex gap-2">
+              <button id="addLayerBtn" type="button"
+                class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">＋追加</button>
+              <button id="removeLayerBtn" type="button"
+                class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">削除</button>
+            </div>
+          </div>
+
+          <div id="layerSettings" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">テキスト</label>
+              <textarea id="textInput"
+                class="w-full p-3 sm:p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-24 sm:h-32 text-base sm:text-lg text-slate-700"
+                placeholder="ここにテキストを入力してください..."></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">フォント</label>
+              <select id="fontSelect"
+                class="w-full p-2 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-base sm:text-lg text-slate-700">
+                <option value="Mochiy Pop P One">Mochiy Pop P One</option>
+                <option value="Noto Sans JP">Noto Sans JP</option>
+                <option value="Noto Serif JP">Noto Serif JP</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                フォントサイズ: <span id="fontSizeDisplay" class="text-blue-600">100</span>px
+              </label>
+              <input type="range" id="fontSizeSlider" min="16" max="200" value="100"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider">
+              <div class="flex justify-between text-xs text-slate-500 mt-1">
+                <span>16px</span>
+                <span>200px</span>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-slate-100">
+              <label class="inline-flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+                <input type="checkbox" id="showBorderCheckbox" checked
+                  class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
+                <span class="ml-2 text-slate-700 font-medium">テキスト枠を表示</span>
+              </label>
+            </div>
+          </div>
         </div>
 
-        <!-- Image Selection -->
+        <!-- Background Selection -->
         <div class="bg-white rounded-xl shadow-lg p-3 sm:p-6">
           <h3 class="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4 flex items-center">
             <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,63 +123,25 @@
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
               </path>
             </svg>
-            モード選択
+            背景画像
           </h3>
-          <div class="space-y-2 sm:space-y-3">
-            <label
-              class="flex items-center space-x-3 p-2 sm:p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
-              <input type="radio" id="normalImg" name="imageSelect" value="normalImage" checked
-                class="text-blue-600 focus:ring-blue-500">
-              <span class="text-base sm:text-lg text-slate-700 font-medium">いつもの</span>
-            </label>
-            <label
-              class="flex items-center space-x-3 p-2 sm:p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
-              <input type="radio" id="summerImg" name="imageSelect" value="summerImage"
-                class="text-blue-600 focus:ring-blue-500">
-              <span class="text-base sm:text-lg text-slate-700 font-medium">サマー</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Font Selection -->
-        <div class="bg-white rounded-xl shadow-lg p-3 sm:p-6">
-          <h3 class="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4 flex items-center">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-purple-500" fill="none" stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
-              </path>
-            </svg>
-            フォント設定
-          </h3>
-          <div class="space-y-3 sm:space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">フォント</label>
-              <select id="fontSelect"
-                class="w-full p-2 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-base sm:text-lg text-slate-700">
-                <option value="Mochiy Pop P One" selected>Mochiy Pop P One</option>
-                <option value="Noto Sans JP">Noto Sans JP</option>
-                <option value="Noto Serif JP">Noto Serif JP</option>
-              </select>
+          <div class="space-y-3">
+            <div id="backgroundDropArea"
+              class="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-slate-600">
+              <p class="mb-2 text-sm">画像をここにドラッグ＆ドロップ、または貼り付けしてください。</p>
+              <label
+                class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-blue-600 text-white cursor-pointer">
+                <span>画像を選択</span>
+                <input id="customImageInput" type="file" accept="image/*" class="hidden">
+              </label>
+              <p class="mt-2 text-xs text-slate-500">YouTubeサムネイル用背景に使える画像を追加できます。</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-2">
-                フォントサイズ: <span id="fontSizeDisplay" class="text-blue-600">34</span>px
+                拡大縮小: <span id="bgScaleDisplay" class="text-blue-600">100</span>%
               </label>
-              <input type="range" id="fontSizeSlider" min="16" max="72" value="34"
+              <input type="range" id="bgScaleSlider" min="10" max="500" value="100"
                 class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider">
-              <div class="flex justify-between text-xs text-slate-500 mt-1">
-                <span>16px</span>
-                <span>72px</span>
-              </div>
-            </div>
-
-            <div class="pt-2 border-t border-slate-100">
-              <label class="inline-flex items-center cursor-pointer hover:opacity-80 transition-opacity">
-                <input type="checkbox" id="showBorderCheckbox" checked
-                  class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300">
-                <span class="ml-2 text-slate-700 font-medium">テキスト枠を表示</span>
-              </label>
             </div>
           </div>
         </div>
@@ -175,33 +162,197 @@
 
   <script>
     window.addEventListener('load', () => {
-      let img = document.getElementById('normalImage');
+      const customImage = new Image();
+      let img = null;
+
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
       const textInput = document.getElementById('textInput');
       const downloadBtn = document.getElementById('downloadBtn');
-      const imageRadios = document.querySelectorAll('input[name="imageSelect"]');
       const fontSelect = document.getElementById('fontSelect');
       const fontSizeSlider = document.getElementById('fontSizeSlider');
       const fontSizeDisplay = document.getElementById('fontSizeDisplay');
       const showBorderCheckbox = document.getElementById('showBorderCheckbox');
+      const backgroundDropArea = document.getElementById('backgroundDropArea');
+      const customImageInput = document.getElementById('customImageInput');
+      const layerTabs = document.getElementById('layerTabs');
+      const addLayerBtn = document.getElementById('addLayerBtn');
+      const removeLayerBtn = document.getElementById('removeLayerBtn');
+      const bgScaleSlider = document.getElementById('bgScaleSlider');
+      const bgScaleDisplay = document.getElementById('bgScaleDisplay');
 
-      // 初期選択領域
-      let selRect = { x: 52, y: 57, w: 285, h: 130 };
+      const THUMBNAIL_WIDTH = 1280;
+      const THUMBNAIL_HEIGHT = 720;
+      const MOVE_STEP = 20;
+
+      let bgTransform = { scale: 1, offsetX: 0, offsetY: 0 };
+      let textLayers = [{
+        text: 'みなぎちゃんねる',
+        fontFamily: 'Mochiy Pop P One',
+        fontSize: 100,
+        showBorder: true,
+        rect: { x: 20, y: 460, w: 1240, h: 240 }
+      }];
+      let activeLayerIndex = 0;
       let isDragging = false, mode = null;
       let startX, startY, offsetX, offsetY;
+      let resizeHandle = null;
+      let originalRect = null;
+      const HANDLE_SIZE = 12;
+      const MIN_TEXT_RECT = 40;
 
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        // Load the initial font and then draw
+      updateCanvasSize();
+      resetBackgroundTransform(img);
+
+      function updateCanvasSize() {
+        canvas.width = THUMBNAIL_WIDTH;
+        canvas.height = THUMBNAIL_HEIGHT;
+      }
+
+      function resetBackgroundTransform(image) {
+        if (!image) {
+          bgTransform.scale = 1;
+          bgTransform.offsetX = 0;
+          bgTransform.offsetY = 0;
+          bgScaleSlider.value = 100;
+          bgScaleDisplay.textContent = '100';
+          return;
+        }
+        const fitScale = Math.max(THUMBNAIL_WIDTH / image.width, THUMBNAIL_HEIGHT / image.height);
+        bgTransform.scale = fitScale;
+        bgTransform.offsetX = (THUMBNAIL_WIDTH - image.width * fitScale) / 2;
+        bgTransform.offsetY = (THUMBNAIL_HEIGHT - image.height * fitScale) / 2;
+        bgScaleSlider.value = Math.round(fitScale * 100);
+        bgScaleDisplay.textContent = bgScaleSlider.value;
+      }
+
+      function setBackgroundImage(sourceImage) {
+        img = sourceImage;
+        resetBackgroundTransform(img);
+        loadFontsAndDraw();
+      }
+
+      function getActiveLayer() {
+        return textLayers[activeLayerIndex];
+      }
+
+      function getResizeHandle(rect, x, y) {
+        const points = {
+          nw: [rect.x, rect.y],
+          ne: [rect.x + rect.w, rect.y],
+          sw: [rect.x, rect.y + rect.h],
+          se: [rect.x + rect.w, rect.y + rect.h]
+        };
+        for (const key of Object.keys(points)) {
+          const [px, py] = points[key];
+          if (Math.abs(px - x) <= HANDLE_SIZE && Math.abs(py - y) <= HANDLE_SIZE) {
+            return key;
+          }
+        }
+        return null;
+      }
+
+      function updateCanvasCursor(mx, my) {
+        const rect = getActiveLayer().rect;
+        const handle = getResizeHandle(rect, mx, my);
+        if (handle) {
+          if (handle === 'nw' || handle === 'se') {
+            canvas.style.cursor = 'nwse-resize';
+          } else {
+            canvas.style.cursor = 'nesw-resize';
+          }
+          return;
+        }
+
+        let hitLayer = null;
+        for (let i = textLayers.length - 1; i >= 0; i--) {
+          const rect = textLayers[i].rect;
+          if (mx > rect.x && mx < rect.x + rect.w && my > rect.y && my < rect.y + rect.h) {
+            hitLayer = i;
+            break;
+          }
+        }
+
+        if (hitLayer !== null) {
+          canvas.style.cursor = 'move';
+        } else if (img) {
+          canvas.style.cursor = 'grab';
+        } else {
+          canvas.style.cursor = 'crosshair';
+        }
+      }
+
+      function renderLayerTabs() {
+        layerTabs.innerHTML = '';
+        textLayers.forEach((layer, index) => {
+          const tab = document.createElement('button');
+          tab.type = 'button';
+          tab.textContent = `テキスト ${index + 1}`;
+          tab.className = 'px-3 py-2 rounded-lg border transition';
+          if (index === activeLayerIndex) {
+            tab.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+          } else {
+            tab.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200', 'hover:bg-slate-200');
+          }
+          tab.addEventListener('click', () => {
+            activeLayerIndex = index;
+            updateLayerControls();
+            drawCanvas(ctx, showBorderCheckbox.checked);
+          });
+          layerTabs.appendChild(tab);
+        });
+      }
+
+      function updateLayerControls() {
+        const layer = getActiveLayer();
+        textInput.value = layer.text;
+        fontSelect.value = layer.fontFamily;
+        fontSizeSlider.value = layer.fontSize;
+        fontSizeDisplay.textContent = layer.fontSize;
+        showBorderCheckbox.checked = layer.showBorder;
+        renderLayerTabs();
+      }
+
+      function loadFontsAndDraw() {
         document.fonts.load(`${fontSizeSlider.value}px "${fontSelect.value}"`).then(() => {
           drawCanvas(ctx, showBorderCheckbox.checked);
         });
-      };
-      if (img.complete) img.onload();
+      }
 
-      // 共通処理関数
+      function addLayer() {
+        const base = getActiveLayer();
+        const newLayer = {
+          text: '新しいテキスト',
+          fontFamily: base.fontFamily,
+          fontSize: base.fontSize,
+          showBorder: base.showBorder,
+          rect: {
+            x: Math.min(base.rect.x + 20, THUMBNAIL_WIDTH - base.rect.w - 20),
+            y: Math.min(base.rect.y + 20, THUMBNAIL_HEIGHT - base.rect.h - 20),
+            w: base.rect.w,
+            h: base.rect.h
+          }
+        };
+        textLayers.push(newLayer);
+        activeLayerIndex = textLayers.length - 1;
+        updateLayerControls();
+        loadFontsAndDraw();
+      }
+
+      function removeLayer() {
+        if (textLayers.length <= 1) return;
+        textLayers.splice(activeLayerIndex, 1);
+        activeLayerIndex = Math.max(0, activeLayerIndex - 1);
+        updateLayerControls();
+        loadFontsAndDraw();
+      }
+
+      addLayerBtn.addEventListener('click', addLayer);
+      removeLayerBtn.addEventListener('click', removeLayer);
+
+      updateLayerControls();
+      loadFontsAndDraw();
+
       function getPointerPosition(e, canvas) {
         const r = canvas.getBoundingClientRect();
         const scaleX = canvas.width / r.width;
@@ -228,14 +379,42 @@
         const pos = getPointerPosition(e, canvas);
         const mx = pos.x, my = pos.y;
 
-        if (mx > selRect.x && mx < selRect.x + selRect.w && my > selRect.y && my < selRect.y + selRect.h) {
+        const activeRect = getActiveLayer().rect;
+        const handle = getResizeHandle(activeRect, mx, my);
+        if (handle) {
+          mode = 'resize';
+          resizeHandle = handle;
+          originalRect = { ...activeRect };
+          startX = mx;
+          startY = my;
+          isDragging = true;
+          return;
+        }
+
+        let hitLayer = null;
+        for (let i = textLayers.length - 1; i >= 0; i--) {
+          const rect = textLayers[i].rect;
+          if (mx > rect.x && mx < rect.x + rect.w && my > rect.y && my < rect.y + rect.h) {
+            hitLayer = i;
+            break;
+          }
+        }
+
+        if (hitLayer !== null) {
+          activeLayerIndex = hitLayer;
+          updateLayerControls();
+          const rect = getActiveLayer().rect;
           mode = 'move';
-          offsetX = mx - selRect.x;
-          offsetY = my - selRect.y;
+          offsetX = mx - rect.x;
+          offsetY = my - rect.y;
+        } else if (img && !e.shiftKey) {
+          mode = 'panBg';
+          startX = mx;
+          startY = my;
         } else {
           mode = 'new';
           startX = mx; startY = my;
-          selRect = { x: startX, y: startY, w: 0, h: 0 };
+          getActiveLayer().rect = { x: startX, y: startY, w: 0, h: 0 };
         }
         isDragging = true;
       }
@@ -245,13 +424,39 @@
         e.preventDefault();
         const pos = getPointerPosition(e, canvas);
         const mx = pos.x, my = pos.y;
+        const rect = getActiveLayer().rect;
 
         if (mode === 'move') {
-          selRect.x = mx - offsetX;
-          selRect.y = my - offsetY;
+          rect.x = mx - offsetX;
+          rect.y = my - offsetY;
         } else if (mode === 'new') {
-          selRect.w = mx - startX;
-          selRect.h = my - startY;
+          rect.w = mx - startX;
+          rect.h = my - startY;
+        } else if (mode === 'resize' && resizeHandle && originalRect) {
+          const min = MIN_TEXT_RECT;
+          const orig = originalRect;
+          if (resizeHandle === 'nw') {
+            rect.x = Math.min(mx, orig.x + orig.w - min);
+            rect.y = Math.min(my, orig.y + orig.h - min);
+            rect.w = orig.x + orig.w - rect.x;
+            rect.h = orig.y + orig.h - rect.y;
+          } else if (resizeHandle === 'ne') {
+            rect.y = Math.min(my, orig.y + orig.h - min);
+            rect.w = Math.max(mx - orig.x, min);
+            rect.h = orig.y + orig.h - rect.y;
+          } else if (resizeHandle === 'sw') {
+            rect.x = Math.min(mx, orig.x + orig.w - min);
+            rect.w = orig.x + orig.w - rect.x;
+            rect.h = Math.max(my - orig.y, min);
+          } else if (resizeHandle === 'se') {
+            rect.w = Math.max(mx - orig.x, min);
+            rect.h = Math.max(my - orig.y, min);
+          }
+        } else if (mode === 'panBg' && img) {
+          bgTransform.offsetX += mx - startX;
+          bgTransform.offsetY += my - startY;
+          startX = mx;
+          startY = my;
         }
         drawCanvas(ctx, showBorderCheckbox.checked);
       }
@@ -260,18 +465,30 @@
         if (!isDragging) return;
         e.preventDefault();
         isDragging = false;
+        const rect = getActiveLayer().rect;
         if (mode === 'new') {
-          if (selRect.w < 0) { selRect.x += selRect.w; selRect.w = -selRect.w; }
-          if (selRect.h < 0) { selRect.y += selRect.h; selRect.h = -selRect.h; }
+          if (rect.w < 0) { rect.x += rect.w; rect.w = -rect.w; }
+          if (rect.h < 0) { rect.y += rect.h; rect.h = -rect.h; }
         }
         mode = null;
+        resizeHandle = null;
+        originalRect = null;
         drawCanvas(ctx, showBorderCheckbox.checked);
       }
 
       // マウス操作
       canvas.addEventListener('mousedown', handleStart);
-      canvas.addEventListener('mousemove', handleMove);
+      canvas.addEventListener('mousemove', e => {
+        if (!isDragging) {
+          const pos = getPointerPosition(e, canvas);
+          updateCanvasCursor(pos.x, pos.y);
+        }
+        handleMove(e);
+      });
       canvas.addEventListener('mouseup', handleEnd);
+      canvas.addEventListener('mouseout', () => {
+        canvas.style.cursor = 'crosshair';
+      });
 
       // タッチ操作
       canvas.addEventListener('touchstart', handleStart, { passive: false });
@@ -281,58 +498,139 @@
       // 共通描画処理
       function drawCanvas(context, showBorder) {
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(img, 0, 0);
-        // 枠線（表示用のみ）
-        if (showBorder) {
-          context.save();
-          context.strokeStyle = 'red'; context.lineWidth = 2; context.setLineDash([6, 4]);
-          context.strokeRect(selRect.x, selRect.y, selRect.w, selRect.h);
-          context.restore();
+        context.fillStyle = 'white';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        if (img) {
+          context.drawImage(img, bgTransform.offsetX, bgTransform.offsetY, img.width * bgTransform.scale, img.height * bgTransform.scale);
         }
-        // クリップ領域
-        context.save();
-        context.beginPath(); context.rect(selRect.x, selRect.y, selRect.w, selRect.h); context.clip();
-        // テキスト折り返し描画（黒一色）
-        const text = textInput.value;
-        const fontSize = parseInt(fontSizeSlider.value);
-        const lineHeight = fontSize;
-        const x0 = selRect.x;
-        let y0 = selRect.y + lineHeight;
-        context.font = `${fontSize}px "${fontSelect.value}", sans-serif`;
-        context.fillStyle = 'black';
-        const lines = text.split("\n");
-        for (const rawLine of lines) {
-          let line = '';
-          for (const ch of rawLine) {
-            const test = line + ch;
-            if (context.measureText(test).width > selRect.w && line) {
+
+        textLayers.forEach((layer, index) => {
+          const rect = layer.rect;
+          if (!rect.w || !rect.h) return;
+
+          if (layer.showBorder && showBorder) {
+            context.save();
+            context.strokeStyle = index === activeLayerIndex ? 'red' : 'rgba(100,116,139,0.65)';
+            context.lineWidth = 2;
+            context.setLineDash(index === activeLayerIndex ? [6, 4] : []);
+            context.strokeRect(rect.x, rect.y, rect.w, rect.h);
+            context.restore();
+          }
+
+          if (index === activeLayerIndex) {
+            const points = [
+              [rect.x, rect.y],
+              [rect.x + rect.w, rect.y],
+              [rect.x, rect.y + rect.h],
+              [rect.x + rect.w, rect.y + rect.h]
+            ];
+            context.save();
+            context.fillStyle = 'white';
+            context.strokeStyle = '#2563eb';
+            context.lineWidth = 2;
+            for (const [px, py] of points) {
+              context.fillRect(px - HANDLE_SIZE / 2, py - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
+              context.strokeRect(px - HANDLE_SIZE / 2, py - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
+            }
+            context.restore();
+          }
+
+          context.save();
+          context.beginPath();
+          context.rect(rect.x, rect.y, rect.w, rect.h);
+          context.clip();
+
+          const text = layer.text;
+          const fontSize = layer.fontSize;
+          const lineHeight = fontSize;
+          const x0 = rect.x;
+          let y0 = rect.y + lineHeight;
+          context.font = `${fontSize}px "${layer.fontFamily}", sans-serif`;
+          context.fillStyle = 'black';
+          const lines = text.split("\n");
+          for (const rawLine of lines) {
+            let line = '';
+            for (const ch of rawLine) {
+              const test = line + ch;
+              if (context.measureText(test).width > rect.w && line) {
+                context.fillText(line, x0, y0);
+                line = ch;
+                y0 += lineHeight;
+              } else {
+                line = test;
+              }
+            }
+            if (line) {
               context.fillText(line, x0, y0);
-              line = ch; y0 += lineHeight;
-            } else {
-              line = test;
+              y0 += lineHeight;
             }
           }
-          if (line) { context.fillText(line, x0, y0); y0 += lineHeight; }
-        }
-        context.restore();
+          context.restore();
+        });
       }
 
-      textInput.addEventListener('input', () => drawCanvas(ctx, showBorderCheckbox.checked));
-
-      showBorderCheckbox.addEventListener('change', () => {
+      textInput.addEventListener('input', () => {
+        getActiveLayer().text = textInput.value;
         drawCanvas(ctx, showBorderCheckbox.checked);
       });
 
-      imageRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-          if (radio.checked) {
-            img = document.getElementById(radio.value);
+      showBorderCheckbox.addEventListener('change', () => {
+        getActiveLayer().showBorder = showBorderCheckbox.checked;
+        drawCanvas(ctx, showBorderCheckbox.checked);
+      });
+
+
+      function handleImageFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        const url = URL.createObjectURL(file);
+        customImage.onload = () => {
+          URL.revokeObjectURL(url);
+          setBackgroundImage(customImage);
+        };
+        customImage.src = url;
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        const file = event.dataTransfer?.files?.[0];
+        if (file) {
+          handleImageFile(file);
+        }
+      }
+
+      backgroundDropArea.addEventListener('dragover', e => e.preventDefault());
+      backgroundDropArea.addEventListener('drop', handleDrop);
+      canvas.addEventListener('dragover', e => e.preventDefault());
+      canvas.addEventListener('drop', handleDrop);
+
+      window.addEventListener('paste', e => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+        for (const item of items) {
+          if (item.type.startsWith('image/')) {
+            const file = item.getAsFile();
+            if (file) {
+              handleImageFile(file);
+              break;
+            }
           }
-          drawCanvas(ctx, showBorderCheckbox.checked);
-        });
+        }
+      });
+
+      customImageInput.addEventListener('change', e => {
+        const file = e.target.files?.[0];
+        handleImageFile(file);
+      });
+
+      bgScaleSlider.addEventListener('input', () => {
+        const scale = Number(bgScaleSlider.value) / 100;
+        bgTransform.scale = scale;
+        bgScaleDisplay.textContent = bgScaleSlider.value;
+        drawCanvas(ctx, showBorderCheckbox.checked);
       });
 
       fontSelect.addEventListener('change', () => {
+        getActiveLayer().fontFamily = fontSelect.value;
         document.fonts.load(`${fontSizeSlider.value}px "${fontSelect.value}"`).then(() => {
           drawCanvas(ctx, showBorderCheckbox.checked);
         });
@@ -340,6 +638,7 @@
 
       fontSizeSlider.addEventListener('input', () => {
         fontSizeDisplay.textContent = fontSizeSlider.value;
+        getActiveLayer().fontSize = Number(fontSizeSlider.value);
         document.fonts.load(`${fontSizeSlider.value}px "${fontSelect.value}"`).then(() => {
           drawCanvas(ctx, showBorderCheckbox.checked);
         });
