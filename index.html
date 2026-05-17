@@ -157,13 +157,12 @@
           <div class="space-y-3">
             <div id="backgroundDropArea"
               class="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-slate-600">
-              <p class="mb-2 text-sm">画像をここにドラッグ＆ドロップ、または貼り付けしてください。</p>
+              <p class="mb-2 text-sm">画像や保存した状態ファイル（JSON）をここにドラッグ＆ドロップ、または画像を貼り付けしてください。</p>
               <label
                 class="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-blue-600 text-white cursor-pointer">
                 <span>画像を選択</span>
                 <input id="customImageInput" type="file" accept="image/*" class="hidden">
               </label>
-              <p class="mt-2 text-xs text-slate-500">YouTubeサムネイル用背景に使える画像を追加できます。</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-2">
@@ -176,15 +175,24 @@
         </div>
 
         <!-- Download Button -->
-        <button id="downloadBtn"
-          class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center space-x-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-            </path>
-          </svg>
-          <span>ダウンロード</span>
-        </button>
+        <div class="space-y-3">
+          <button id="downloadBtn"
+            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
+            </svg>
+            <span>ダウンロード</span>
+          </button>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button id="saveStateBtn" type="button"
+              class="w-full sm:w-auto px-4 py-3 rounded-lg bg-slate-800 text-white hover:bg-slate-900 transition">状態を保存</button>
+            <button id="loadStateBtn" type="button"
+              class="w-full sm:w-auto px-4 py-3 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">状態を読み込み</button>
+          </div>
+          <input id="stateFileInput" type="file" accept="application/json" class="hidden">
+        </div>
       </div>
     </div>
   </div>
@@ -208,6 +216,9 @@
       const showBorderCheckbox = document.getElementById('showBorderCheckbox');
       const backgroundDropArea = document.getElementById('backgroundDropArea');
       const customImageInput = document.getElementById('customImageInput');
+      const saveStateBtn = document.getElementById('saveStateBtn');
+      const loadStateBtn = document.getElementById('loadStateBtn');
+      const stateFileInput = document.getElementById('stateFileInput');
       const layerTabs = document.getElementById('layerTabs');
       const addLayerBtn = document.getElementById('addLayerBtn');
       const removeLayerBtn = document.getElementById('removeLayerBtn');
@@ -273,9 +284,11 @@
         bgScaleDisplay.textContent = bgScaleSlider.value;
       }
 
-      function setBackgroundImage(sourceImage) {
+      function setBackgroundImage(sourceImage, preserveTransform = false) {
         img = sourceImage;
-        resetBackgroundTransform(img);
+        if (!preserveTransform) {
+          resetBackgroundTransform(img);
+        }
         loadFontsAndDraw();
       }
 
@@ -664,9 +677,15 @@
       function handleDrop(event) {
         event.preventDefault();
         const file = event.dataTransfer?.files?.[0];
-        if (file) {
-          handleImageFile(file);
+        if (!file) return;
+
+        const isJson = file.type === 'application/json' || file.name.toLowerCase().endsWith('.json');
+        if (isJson) {
+          loadStateFromFile(file);
+          return;
         }
+
+        handleImageFile(file);
       }
 
       backgroundDropArea.addEventListener('dragover', e => e.preventDefault());
@@ -747,6 +766,71 @@
         drawCanvas(ectx, false);
         const link = document.createElement('a'); link.download = 'text_image.png';
         link.href = exportCanvas.toDataURL('image/png'); link.click();
+      });
+
+      function getStatePayload() {
+        let bgDataUrl = null;
+        if (img) {
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = img.width;
+          tempCanvas.height = img.height;
+          tempCanvas.getContext('2d').drawImage(img, 0, 0);
+          bgDataUrl = tempCanvas.toDataURL('image/png');
+        }
+        return {
+          version: 1,
+          bgDataUrl,
+          bgTransform,
+          textLayers,
+          activeLayerIndex
+        };
+      }
+
+      function saveStateToFile() {
+        const payload = getStatePayload();
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'samune-maker-state.json';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function loadStateFromFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const payload = JSON.parse(reader.result);
+            if (payload.bgDataUrl) {
+              customImage.onload = () => {
+                bgTransform = payload.bgTransform || bgTransform;
+                setBackgroundImage(customImage, !!payload.bgTransform);
+              };
+              customImage.src = payload.bgDataUrl;
+            } else {
+              img = null;
+              bgTransform = payload.bgTransform || { scale: 1, offsetX: 0, offsetY: 0 };
+              loadFontsAndDraw();
+            }
+            textLayers = payload.textLayers || textLayers;
+            activeLayerIndex = Math.min(Math.max(payload.activeLayerIndex || 0, 0), textLayers.length - 1);
+            updateLayerControls();
+          } catch (error) {
+            alert('状態の読み込みに失敗しました。JSON ファイルを確認してください。');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      saveStateBtn.addEventListener('click', saveStateToFile);
+      loadStateBtn.addEventListener('click', () => stateFileInput.click());
+      stateFileInput.addEventListener('change', e => {
+        const file = e.target.files?.[0];
+        if (file) {
+          loadStateFromFile(file);
+        }
+        e.target.value = '';
       });
     });
   </script>
