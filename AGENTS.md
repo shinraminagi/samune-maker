@@ -1,29 +1,27 @@
-# CLAUDE.md
+# Repository Guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to code assistants working in the `samune-maker` repository.
 
 ## Project Overview
 
-This is a Japanese meme maker web application called "shimaimashita-maker" that allows users to overlay text on an anime-style image. The application enables users to select rectangular regions on the image and add multi-line, word-wrapped text within those regions.
+This repository contains a small thumbnail maker web app. The app renders a base image and allows the user to place editable text layers over it. Text layers support font selection, color, outline, alignment, and layout within a canvas-based region.
 
 ## Architecture
 
-- **Single-file application**: The entire application is contained in `index.html` with embedded CSS and JavaScript
-- **Canvas-based image manipulation**: Uses HTML5 Canvas API for image rendering and text overlay
-- **Interactive region selection**: Users can drag to create new text regions or move existing ones
-- **Text rendering**: Supports multi-line text with automatic word wrapping within selected regions
-- **Export functionality**: Generates downloadable PNG files with text overlays
+- **Single-page static app**: Everything lives in `index.html` with embedded CSS and JavaScript
+- **Canvas rendering**: Uses the HTML5 Canvas API for image drawing and text rendering
+- **Layered text editing**: Supports multiple text layers with independent styling and positioning
+- **Export**: Can download the rendered canvas as a PNG image
+- **State save/load**: Supports exporting/importing editor state as JSON
 
-## Key Components
+## Important Files
 
-- **Image loading**: References `normal.png` as the base image for text overlay
-- **Rectangle selection system**: Handles mouse events for creating and moving text regions
-- **Text rendering engine**: Implements word wrapping and multi-line text drawing within clipped canvas regions
-- **Export system**: Creates clean output without selection borders for download
+- `index.html` — main application file
+- `README.md` — project description and usage notes
 
 ## Development Notes
 
-- The application is designed to run directly in a browser without build tools
-- Text is rendered in black at 34px font size with automatic line breaks
-- The selection rectangle has a red dashed border for user interaction
-- The base image (normal.png) should be kept in the same directory as index.html
+- No build step is required; open `index.html` directly in a browser to run the app
+- The editor handles image drag-and-drop, text alignment, and outline styling
+- JSON state import/export is available to preserve the current background and text layer settings
+- Keep changes focused on the single-file app and avoid adding unnecessary build tooling or extra dependencies
