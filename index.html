@@ -88,6 +88,25 @@
                 <option value="Shippori Mincho">Shippori Mincho</option>
               </select>
             </div>
+            <div>
+              <div class="flex flex-wrap gap-3 justify-center">
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="boldCheckbox" type="checkbox"
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">太字</span>
+                </label>
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="italicCheckbox" type="checkbox"
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">斜体</span>
+                </label>
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                  <input id="underlineCheckbox" type="checkbox"
+                    class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                  <span class="text-slate-700">下線</span>
+                </label>
+              </div>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-slate-700 mb-2">文字色</label>
@@ -212,6 +231,9 @@
       const fontSelect = document.getElementById('fontSelect');
       const colorInput = document.getElementById('colorInput');
       const textAlignInputs = document.querySelectorAll('input[name="textAlign"]');
+      const boldCheckbox = document.getElementById('boldCheckbox');
+      const italicCheckbox = document.getElementById('italicCheckbox');
+      const underlineCheckbox = document.getElementById('underlineCheckbox');
       const strokeCheckbox = document.getElementById('strokeCheckbox');
       const strokeColorInput = document.getElementById('strokeColorInput');
       const fontSizeSlider = document.getElementById('fontSizeSlider');
@@ -239,6 +261,9 @@
         fontSize: 150,
         color: '#ff0000',
         textAlign: 'center',
+        bold: false,
+        italic: false,
+        underline: false,
         strokeEnabled: true,
         strokeColor: '#ffffff',
         showBorder: true,
@@ -249,6 +274,9 @@
         fontSize: 60,
         color: '#ff0000',
         textAlign: 'center',
+        bold: false,
+        italic: false,
+        underline: false,
         strokeEnabled: true,
         strokeColor: '#ffffff',
         showBorder: true,
@@ -374,6 +402,9 @@
         for (const input of textAlignInputs) {
           input.checked = input.value === (layer.textAlign || 'left');
         }
+        boldCheckbox.checked = layer.bold ?? false;
+        italicCheckbox.checked = layer.italic ?? false;
+        underlineCheckbox.checked = layer.underline ?? false;
         strokeCheckbox.checked = layer.strokeEnabled ?? false;
         strokeColorInput.value = layer.strokeColor || '#ffffff';
         fontSizeSlider.value = layer.fontSize;
@@ -396,6 +427,9 @@
           fontSize: base.fontSize,
           color: base.color,
           textAlign: base.textAlign,
+          bold: base.bold,
+          italic: base.italic,
+          underline: base.underline,
           strokeEnabled: base.strokeEnabled,
           strokeColor: base.strokeColor,
           showBorder: base.showBorder,
@@ -624,7 +658,8 @@
             x0 = rect.x + rect.w;
           }
           let y0 = rect.y + lineHeight;
-          context.font = `${fontSize}px "${layer.fontFamily}", sans-serif`;
+          const fontStyle = `${layer.italic ? 'italic ' : ''}${layer.bold ? 'bold ' : ''}${fontSize}px "${layer.fontFamily}", sans-serif`;
+          context.font = fontStyle;
           context.textAlign = textAlign;
           context.fillStyle = layer.color || 'black';
           if (layer.strokeEnabled) {
@@ -649,6 +684,17 @@
             if (line) {
               if (layer.strokeEnabled) context.strokeText(line, x0, y0);
               context.fillText(line, x0, y0);
+              if (layer.underline) {
+                const width = context.measureText(line).width;
+                let lineX = x0;
+                if (textAlign === 'center') {
+                  lineX = x0 - width / 2;
+                } else if (textAlign === 'right') {
+                  lineX = x0 - width;
+                }
+                const underlineY = y0 + Math.max(2, fontSize * 0.1);
+                context.fillRect(lineX, underlineY, width, Math.max(2, fontSize * 0.08));
+              }
               y0 += lineHeight;
             }
           }
@@ -731,6 +777,21 @@
 
       colorInput.addEventListener('input', () => {
         getActiveLayer().color = colorInput.value;
+        drawCanvas(ctx, showBorderCheckbox.checked);
+      });
+
+      boldCheckbox.addEventListener('change', () => {
+        getActiveLayer().bold = boldCheckbox.checked;
+        drawCanvas(ctx, showBorderCheckbox.checked);
+      });
+
+      italicCheckbox.addEventListener('change', () => {
+        getActiveLayer().italic = italicCheckbox.checked;
+        drawCanvas(ctx, showBorderCheckbox.checked);
+      });
+
+      underlineCheckbox.addEventListener('change', () => {
+        getActiveLayer().underline = underlineCheckbox.checked;
         drawCanvas(ctx, showBorderCheckbox.checked);
       });
 
