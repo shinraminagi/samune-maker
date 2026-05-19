@@ -624,7 +624,7 @@
             context.restore();
           }
 
-          if (index === activeLayerIndex) {
+          if (index === activeLayerIndex && showBorder) {
             const points = [
               [rect.x, rect.y],
               [rect.x + rect.w, rect.y],
